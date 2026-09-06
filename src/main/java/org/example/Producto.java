@@ -1,3 +1,5 @@
+package org.example;
+
 public class Producto {
 
     private String nombre;
