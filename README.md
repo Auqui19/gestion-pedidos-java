@@ -4,7 +4,7 @@
 
 Aplicación desarrollada en Java para apoyar la gestión de pedidos de un negocio local.
 
-El proyecto utiliza Git y GitHub como sistema de control de versiones, permitiendo el trabajo colaborativo mediante ramas, commits, pull requests y revisiones de código.
+El proyecto utiliza Git y GitHub como sistema de control de versiones, permitiendo el trabajo colaborativo mediante ramas, commits, Pull Requests y revisiones de código.
 
 ## Integrantes
 
