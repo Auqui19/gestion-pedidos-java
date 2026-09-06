@@ -10,6 +10,14 @@ public class Cliente {
         this.dni = dni;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
     public void mostrarDatos() {
         System.out.println("Nombre: " + nombre);
         System.out.println("DNI: " + dni);
