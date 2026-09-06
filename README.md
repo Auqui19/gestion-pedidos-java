@@ -1,4 +1,9 @@
 # Gestión de Pedidos Java
+## Pruebas
+
+El proyecto fue ejecutado y verificado correctamente.
+
+
 
 ## Descripción
 
