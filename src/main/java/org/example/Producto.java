@@ -6,18 +6,39 @@ public class Producto {
     private double precio;
 
     public Producto(String nombre, double precio) {
-        if (nombre == null || nombre.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre del producto no puede estar vacio.");
-        }
-        if (!precioValido(precio)) {
-            throw new IllegalArgumentException("El precio debe ser un valor mayor a 0.");
-        }
-        this.nombre = nombre;
+        validarNombre(nombre);
+        validarPrecio(precio);
+
+        this.nombre = nombre.trim();
         this.precio = precio;
     }
 
-    private boolean precioValido(double precio) {
-        return precio > 0;
+    private void validarNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "El nombre del producto no puede estar vacío."
+            );
+        }
+
+        if (nombre.trim().length() < 3) {
+            throw new IllegalArgumentException(
+                    "El nombre del producto debe tener al menos 3 caracteres."
+            );
+        }
+    }
+
+    private void validarPrecio(double precio) {
+        if (Double.isNaN(precio) || Double.isInfinite(precio)) {
+            throw new IllegalArgumentException(
+                    "El precio debe ser un número válido."
+            );
+        }
+
+        if (precio <= 0) {
+            throw new IllegalArgumentException(
+                    "El precio debe ser mayor que cero."
+            );
+        }
     }
 
     public String getNombre() {
