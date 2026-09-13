@@ -35,7 +35,9 @@ public class Main {
     }
 
     private static void mostrarMenu() {
-        System.out.println("\n=== SISTEMA DE GESTION DE PEDIDOS ===");
+        System.out.println(
+                "\n=== SISTEMA DE GESTION DE PEDIDOS ==="
+        );
         System.out.println("1. Registrar producto");
         System.out.println("2. Registrar cliente");
         System.out.println("3. Registrar pedido");
@@ -47,18 +49,17 @@ public class Main {
     }
 
     private static void registrarProducto() {
-        System.out.println("\n=== REGISTRO DE PRODUCTO ===");
+        System.out.println(
+                "\n=== REGISTRO DE PRODUCTO ==="
+        );
 
         System.out.print("Ingrese nombre del producto: ");
         String nombre = sc.nextLine();
 
-        /*
-         * Se valida primero el nombre para evitar solicitar
-         * el precio cuando el nombre no es valido.
-         */
         if (nombre == null || nombre.trim().isEmpty()) {
             System.out.println(
-                    "Error: El nombre del producto no puede estar vacio."
+                    "Error: El nombre del producto "
+                    + "no puede estar vacio."
             );
             return;
         }
@@ -88,11 +89,15 @@ public class Main {
             Producto producto = new Producto(nombre, precio);
             productos.add(producto);
 
-            System.out.println("\nProducto registrado correctamente.");
+            System.out.println(
+                    "\nProducto registrado correctamente."
+            );
             producto.mostrarDatos();
 
         } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(
+                    "Error: " + e.getMessage()
+            );
         }
     }
 
@@ -100,7 +105,8 @@ public class Main {
         String nombreNormalizado = nombre.trim();
 
         for (Producto producto : productos) {
-            if (producto.getNombre().equalsIgnoreCase(nombreNormalizado)) {
+            if (producto.getNombre()
+                    .equalsIgnoreCase(nombreNormalizado)) {
                 return true;
             }
         }
@@ -109,33 +115,46 @@ public class Main {
     }
 
     private static void registrarCliente() {
-        System.out.println("\n=== REGISTRO DE CLIENTE ===");
+        System.out.println(
+                "\n=== REGISTRO DE CLIENTE ==="
+        );
 
         System.out.print("Ingrese nombre: ");
         String nombre = sc.nextLine();
 
         if (nombre == null || nombre.trim().isEmpty()) {
             System.out.println(
-                    "Error: El nombre del cliente no puede estar vacio."
+                    "Error: El nombre del cliente "
+                    + "no puede estar vacio."
             );
             return;
         }
 
         nombre = nombre.trim();
 
+        if (nombre.length() < 3) {
+            System.out.println(
+                    "Error: El nombre del cliente debe tener "
+                    + "al menos 3 caracteres."
+            );
+            return;
+        }
+
         System.out.print("Ingrese DNI: ");
         String dni = sc.nextLine().trim();
 
         if (!dni.matches("\\d{8}")) {
             System.out.println(
-                    "Error: El DNI debe contener exactamente 8 numeros."
+                    "Error: El DNI debe contener "
+                    + "exactamente 8 numeros."
             );
             return;
         }
 
         if (clienteDuplicado(dni)) {
             System.out.println(
-                    "Error: Ya existe un cliente registrado con ese DNI."
+                    "Error: Ya existe un cliente "
+                    + "registrado con ese DNI."
             );
             return;
         }
@@ -143,7 +162,9 @@ public class Main {
         Cliente cliente = new Cliente(nombre, dni);
         clientes.add(cliente);
 
-        System.out.println("\nCliente registrado correctamente.");
+        System.out.println(
+                "\nCliente registrado correctamente."
+        );
         cliente.mostrarDatos();
     }
 
@@ -174,15 +195,23 @@ public class Main {
             return;
         }
 
-        System.out.println("\n=== REGISTRO DE PEDIDO ===");
+        System.out.println(
+                "\n=== REGISTRO DE PEDIDO ==="
+        );
 
         consultarClientes();
 
-        System.out.print("Seleccione el numero del cliente: ");
+        System.out.print(
+                "Seleccione el numero del cliente: "
+        );
         int indiceCliente = leerEntero() - 1;
 
-        if (indiceCliente < 0 || indiceCliente >= clientes.size()) {
-            System.out.println("Error: Cliente no valido.");
+        if (indiceCliente < 0
+                || indiceCliente >= clientes.size()) {
+            System.out.println(
+                    "Error: Seleccione un cliente "
+                    + "de la lista mostrada."
+            );
             return;
         }
 
@@ -190,11 +219,17 @@ public class Main {
 
         consultarProductos();
 
-        System.out.print("Seleccione el numero del producto: ");
+        System.out.print(
+                "Seleccione el numero del producto: "
+        );
         int indiceProducto = leerEntero() - 1;
 
-        if (indiceProducto < 0 || indiceProducto >= productos.size()) {
-            System.out.println("Error: Producto no valido.");
+        if (indiceProducto < 0
+                || indiceProducto >= productos.size()) {
+            System.out.println(
+                    "Error: Seleccione un producto "
+                    + "de la lista mostrada."
+            );
             return;
         }
 
@@ -203,11 +238,21 @@ public class Main {
         System.out.print("Ingrese cantidad: ");
         int cantidad = leerEntero();
 
+        if (cantidad <= 0) {
+            System.out.println(
+                    "Error: La cantidad debe ser mayor que cero."
+            );
+            return;
+        }
+
         try {
             Pedido pedido = new Pedido(producto, cantidad);
             pedidos.add(pedido);
 
-            System.out.println("\nPedido registrado correctamente.");
+            System.out.println(
+                    "\nPedido registrado correctamente."
+            );
+
             System.out.println(
                     "Cliente: "
                     + cliente.getNombre()
@@ -219,15 +264,21 @@ public class Main {
             pedido.mostrarPedido();
 
         } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(
+                    "Error: " + e.getMessage()
+            );
         }
     }
 
     private static void consultarProductos() {
-        System.out.println("\n=== LISTA DE PRODUCTOS ===");
+        System.out.println(
+                "\n=== LISTA DE PRODUCTOS ==="
+        );
 
         if (productos.isEmpty()) {
-            System.out.println("No hay productos registrados.");
+            System.out.println(
+                    "No hay productos registrados."
+            );
             return;
         }
 
@@ -244,10 +295,14 @@ public class Main {
     }
 
     private static void consultarClientes() {
-        System.out.println("\n=== LISTA DE CLIENTES ===");
+        System.out.println(
+                "\n=== LISTA DE CLIENTES ==="
+        );
 
         if (clientes.isEmpty()) {
-            System.out.println("No hay clientes registrados.");
+            System.out.println(
+                    "No hay clientes registrados."
+            );
             return;
         }
 
@@ -264,10 +319,14 @@ public class Main {
     }
 
     private static void consultarPedidos() {
-        System.out.println("\n=== LISTA DE PEDIDOS ===");
+        System.out.println(
+                "\n=== LISTA DE PEDIDOS ==="
+        );
 
         if (pedidos.isEmpty()) {
-            System.out.println("No hay pedidos registrados.");
+            System.out.println(
+                    "No hay pedidos registrados."
+            );
             return;
         }
 
@@ -276,15 +335,22 @@ public class Main {
         for (int i = 0; i < pedidos.size(); i++) {
             Pedido pedido = pedidos.get(i);
 
-            System.out.println("\nPedido " + (i + 1) + ":");
+            System.out.println(
+                    "\nPedido " + (i + 1) + ":"
+            );
+
             pedido.mostrarPedido();
-            System.out.println("----------------------------------");
+
+            System.out.println(
+                    "----------------------------------"
+            );
 
             totalGeneral += pedido.calcularTotal();
         }
 
         System.out.printf(
-                "Importe total de todos los pedidos: S/ %.2f%n",
+                "Importe total de todos los pedidos: "
+                + "S/ %.2f%n",
                 totalGeneral
         );
     }
@@ -298,7 +364,8 @@ public class Main {
 
             } catch (NumberFormatException e) {
                 System.out.print(
-                        "Error: Ingrese un numero entero valido: "
+                        "Error: Ingrese un numero "
+                        + "entero valido: "
                 );
             }
         }
@@ -313,7 +380,8 @@ public class Main {
 
             } catch (NumberFormatException e) {
                 System.out.print(
-                        "Error: Ingrese un precio numerico valido: "
+                        "Error: Ingrese un precio "
+                        + "numerico valido: "
                 );
             }
         }
