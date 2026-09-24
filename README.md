@@ -1,79 +1,90 @@
-# Gestión de Pedidos Java
+# SGPI - Sistema de Gestion de Pedidos e Inventario
 
-## Descripción
+Primera version funcional del proyecto final del curso **Tecnicas de
+Programacion Orientada a Objetos** (Ingenieria de Sistemas Computacionales,
+UPN). Caso de negocio: tienda de tecnologia **"El Ahorro"**.
 
-Aplicación desarrollada en Java para apoyar la gestión de pedidos de un negocio local.
+## Descripcion
 
-El proyecto utiliza Git y GitHub como sistema de control de versiones, permitiendo el trabajo colaborativo mediante ramas, commits, Pull Requests y revisiones de código.
+Aplicacion de **consola en Java** que gestiona usuarios, productos,
+inventario, clientes, pedidos y reportes. Aplica POO (herencia, interfaces,
+encapsulamiento, composicion y enums) y persiste la informacion en archivos
+**CSV**.
 
 ## Integrantes
 
 - Sebastian Alonso Auqui Tasayco
 - Nallely Alexandra Quispe Cristan
-- Araceli Quiliche de la Cruz
 - Angelo Roberto Soto Martinez
-- Ivorik Heinz Quintanilla Libman
-- Anderson Fabrizio Bereche Jara
 
-## Tecnologías Utilizadas
+## Tecnologias
 
-- Java
-- Apache NetBeans
-- Maven
-- Git
-- GitHub
+- Java 17+
+- Interfaz de usuario por consola
+- Archivos CSV (`FileWriter` / `BufferedReader`)
+- Maven (opcional)
+- Git / GitHub
 
-## Estructura del Proyecto
+## Estructura del proyecto
 
 ```text
-gestion-pedidos-java
-│
-├── src
-│   └── main
-│       └── java
-│           └── org
-│               └── example
-│                   └── Main.java
-│
-├── pom.xml
-├── .gitignore
-└── README.md
+src/main/java/com/elahorro/sgpi
+├── Main.java            Lanzador (menu de consola)
+├── modelo/              Persona, Usuario, Cliente, Categoria, Producto,
+│   └── enums/           Pedido, DetallePedido, Pago + Identificable, Mostrable
+├── repositorio/         Persistencia CSV (Repositorio, *Repositorio)
+├── servicio/            Sistema y servicios de negocio (*Service)
+├── vista/               Consola y AplicacionConsola (interfaz de consola)
+├── util/                Validador, Cifrador (SHA-256), CsvUtil
+└── pruebas/             PruebasSistema (evidencia de los 20 RF)
+src/test/java/com/elahorro/sgpi/ModeloTest.java
+docs/                    requerimientos.md, diagrama-uml.md, evidencia.md
+datos/                   Archivos CSV generados en tiempo de ejecucion
 ```
 
 ## Funcionalidades
 
-- Mostrar menú principal.
-- Ejecución de la aplicación desde consola.
-- Uso de control de versiones con Git.
-- Trabajo colaborativo mediante GitHub.
+- Login con roles (Administrador, Vendedor, Almacenero) y contrasena cifrada.
+- CRUD de productos tecnologicos (celulares, laptops, accesorios, audio),
+  categorias, clientes y usuarios.
+- Busqueda de productos y clientes; alertas de stock minimo.
+- Registro de pedidos con multiples detalles, validacion de stock, descuento
+  (maximo 20% sin autorizacion), pago y cancelacion con reposicion de stock.
+- Reportes de stock bajo y ventas por fecha, con exportacion a CSV.
 
-## Metodología de Trabajo
+## Ejecucion
 
-- Creación de ramas individuales.
-- Registro de cambios mediante commits.
-- Publicación de ramas en GitHub.
-- Creación de Pull Requests.
-- Revisión de código entre integrantes.
-- Integración de cambios mediante merge.
-
-## Ejecución del Proyecto
-
-1. Clonar el repositorio:
+### Con Maven
 
 ```bash
-git clone https://github.com/Auqui19/gestion-pedidos-java.git
+mvn clean package
+java -jar target/sgpi-1.0.0.jar
 ```
 
-2. Abrir el proyecto en Apache NetBeans.
+### Sin Maven (javac)
 
-3. Ejecutar la clase:
-
-```text
-Main.java
+```powershell
+javac -encoding UTF-8 -d target/classes (Get-ChildItem -Recurse -Filter *.java src/main/java).FullName
+java -cp target/classes com.elahorro.sgpi.Main
 ```
+
+**Credenciales por defecto:** `admin` / `admin123`.
+
+## Evidencia
+
+```powershell
+java -cp target/classes com.elahorro.sgpi.pruebas.PruebasSistema
+```
+
+Genera 21 verificaciones de los 20 requerimientos prioritarios. Ver
+`docs/requerimientos.md` y `docs/evidencia.md`.
+
+## Documentacion
+
+- `docs/requerimientos.md` - 20 requerimientos con criterios de aceptacion.
+- `docs/diagrama-uml.md` - Diagrama UML de clases (Mermaid).
+- `docs/evidencia.md` - Salida de pruebas y archivos CSV de ejemplo.
 
 ## Repositorio
-
-Repositorio compartido del proyecto:
 
 https://github.com/Auqui19/gestion-pedidos-java
