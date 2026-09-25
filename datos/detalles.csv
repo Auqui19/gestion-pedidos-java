@@ -1,0 +1,4 @@
+pedidoId;detalleId;productoId;cantidad;precioUnitario;subtotal
+1;1;1;2;1299.90;2599.80
+1;2;2;1;2499.00;2499.00
+2;1;3;3;199.90;599.70

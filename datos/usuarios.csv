@@ -1,0 +1,3 @@
+id;nombre;username;passwordHash;rol
+1;Administrador;admin;240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9;ADMINISTRADOR
+2;Vendedor Uno;vendedor1;7e6e1f7bd27296e97d8494fc51cb3d19355b26e062e7c09a163d954213f41ab9;VENDEDOR
