@@ -1,0 +1,3 @@
+db.url=jdbc:mysql://srvXXXX.hstgr.io:3306/u000000000_sgpi?useSSL=true&serverTimezone=America/Lima&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+db.user=u000000000_admin
+db.password=CAMBIE_ESTA_CLAVE

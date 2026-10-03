@@ -1,79 +1,110 @@
-# Gestión de Pedidos Java
+# SGPI - Sistema de Gestion de Pedidos e Inventario
 
-## Descripción
+Primera version funcional del proyecto final del curso **Tecnicas de
+Programacion Orientada a Objetos** (Ingenieria de Sistemas Computacionales,
+UPN). Caso de negocio: tienda de tecnologia **"El Ahorro"**.
 
-Aplicación desarrollada en Java para apoyar la gestión de pedidos de un negocio local.
+## Descripcion
 
-El proyecto utiliza Git y GitHub como sistema de control de versiones, permitiendo el trabajo colaborativo mediante ramas, commits, Pull Requests y revisiones de código.
+Aplicacion de **consola en Java** que gestiona usuarios, productos,
+inventario, clientes, pedidos y reportes. Aplica POO (herencia, interfaces,
+encapsulamiento, composicion y enums) y persiste la informacion en una base de
+datos **MySQL** mediante **JDBC (patron DAO)**.
 
 ## Integrantes
 
 - Sebastian Alonso Auqui Tasayco
 - Nallely Alexandra Quispe Cristan
-- Araceli Quiliche de la Cruz
 - Angelo Roberto Soto Martinez
-- Ivorik Heinz Quintanilla Libman
-- Anderson Fabrizio Bereche Jara
 
-## Tecnologías Utilizadas
+## Tecnologias
 
-- Java
-- Apache NetBeans
+- Java 17+
+- Interfaz de usuario por consola
+- MySQL (Hostinger) con JDBC puro (patron DAO / Repository)
 - Maven
-- Git
-- GitHub
+- Git / GitHub
 
-## Estructura del Proyecto
+## Estructura del proyecto
 
 ```text
-gestion-pedidos-java
-│
-├── src
-│   └── main
-│       └── java
-│           └── org
-│               └── example
-│                   └── Main.java
-│
-├── pom.xml
-├── .gitignore
-└── README.md
+src/main/java/com/elahorro/sgpi
+├── Main.java            Lanzador (menu de consola)
+├── config/              Conexion (Singleton JDBC a MySQL)
+├── modelo/              Persona, Usuario, Cliente, Categoria, Producto,
+│   └── enums/           Pedido, DetallePedido, Pago + Identificable, Mostrable
+├── repositorio/         DAO JDBC (Repositorio, *DAO)
+├── servicio/            Sistema y servicios de negocio (*Service)
+├── vista/               Consola y AplicacionConsola (interfaz de consola)
+├── util/                Validador, Cifrador (SHA-256)
+└── pruebas/             PruebasSistema (evidencia de los 20 RF)
+src/main/resources/      db.properties (configuracion MySQL)
+src/test/java/com/elahorro/sgpi/ModeloTest.java
+sql/                     sgpi.sql (esquema de la base de datos)
+docs/                    requerimientos.md, diagrama-uml.md, evidencia.md
 ```
+
+## Configuracion de la base de datos
+
+1. En **hPanel de Hostinger**, cree una base de datos y un usuario MySQL.
+2. Active **Remote MySQL** y agregue su **IP publica** a la whitelist.
+3. Ejecute `sql/sgpi.sql` sobre la base creada (MySQL Workbench, DBeaver o
+   phpMyAdmin de hPanel). El script crea las tablas e inserta el administrador
+   por defecto.
+4. Copie `src/main/resources/db.properties.example` como
+   `db.properties` y complete `db.url`, `db.user` y `db.password`.
+
+Puede evitar el archivo usando variables de entorno:
+`SGPI_DB_URL`, `SGPI_DB_USER`, `SGPI_DB_PASSWORD`.
+
+> El archivo `db.properties` esta en `.gitignore`: no suba credenciales reales.
 
 ## Funcionalidades
 
-- Mostrar menú principal.
-- Ejecución de la aplicación desde consola.
-- Uso de control de versiones con Git.
-- Trabajo colaborativo mediante GitHub.
+- Login con roles (Administrador, Vendedor, Almacenero) y contrasena cifrada.
+- CRUD de productos tecnologicos (celulares, laptops, accesorios, audio),
+  categorias, clientes y usuarios.
+- Busqueda de productos y clientes; alertas de stock minimo.
+- Registro de pedidos con multiples detalles, validacion de stock, descuento
+  (maximo 20% sin autorizacion), pago y cancelacion con reposicion de stock.
+- Reportes de stock bajo y ventas por fecha.
 
-## Metodología de Trabajo
+## Ejecucion
 
-- Creación de ramas individuales.
-- Registro de cambios mediante commits.
-- Publicación de ramas en GitHub.
-- Creación de Pull Requests.
-- Revisión de código entre integrantes.
-- Integración de cambios mediante merge.
-
-## Ejecución del Proyecto
-
-1. Clonar el repositorio:
+### Con Maven
 
 ```bash
-git clone https://github.com/Auqui19/gestion-pedidos-java.git
+mvn clean package
+java -jar target/sgpi-1.0.0.jar
 ```
 
-2. Abrir el proyecto en Apache NetBeans.
+### Sin Maven (javac)
 
-3. Ejecutar la clase:
-
-```text
-Main.java
+```powershell
+$conn = "$env:USERPROFILE\.m2\repository\com\mysql\mysql-connector-j\8.4.0\mysql-connector-j-8.4.0.jar"
+javac -encoding UTF-8 -cp $conn -d target/classes (Get-ChildItem -Recurse -Filter *.java src/main/java).FullName
+Copy-Item src/main/resources/* target/classes/
+java -cp "target/classes;$conn" com.elahorro.sgpi.Main
 ```
+
+**Credenciales por defecto:** `admin` / `admin123`.
+
+## Evidencia
+
+```powershell
+java -cp "target/classes;$conn" com.elahorro.sgpi.pruebas.PruebasSistema
+```
+
+Genera 21 verificaciones de los 20 requerimientos prioritarios contra la base
+de datos. **Advertencia:** limpia las tablas; use una base de practica.
+Ver `docs/requerimientos.md` y `docs/evidencia.md`.
+
+## Documentacion
+
+- `docs/requerimientos.md` - 20 requerimientos con criterios de aceptacion.
+- `docs/diagrama-uml.md` - Diagrama UML de clases (Mermaid).
+- `docs/evidencia.md` - Salida de pruebas y evidencia de persistencia MySQL.
 
 ## Repositorio
-
-Repositorio compartido del proyecto:
 
 https://github.com/Auqui19/gestion-pedidos-java

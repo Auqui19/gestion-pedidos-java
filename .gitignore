@@ -37,3 +37,10 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Base de datos (no subir credenciales reales) ###
+src/main/resources/db.properties
+!src/main/resources/db.properties.example
+
+### Datos generados (legado CSV) ###
+datos/
