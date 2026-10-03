@@ -3,12 +3,15 @@ package com.elahorro.sgpi.servicio;
 import com.elahorro.sgpi.modelo.Pedido;
 import com.elahorro.sgpi.modelo.Producto;
 import com.elahorro.sgpi.modelo.enums.EstadoPedido;
-import com.elahorro.sgpi.util.CsvUtil;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Reportes de inventario y ventas. Los datos se consultan a la base de datos
+ * a traves de los servicios; ya no se exportan a CSV.
+ */
 public class ReporteService {
 
     private final PedidoService pedidos;
@@ -24,6 +27,10 @@ public class ReporteService {
     }
 
     public List<Pedido> ventasPorFecha(LocalDate desde, LocalDate hasta) {
+        if (desde.isAfter(hasta)) {
+            throw new IllegalArgumentException(
+                    "La fecha inicial no puede ser posterior a la fecha final.");
+        }
         List<Pedido> encontrados = new ArrayList<Pedido>();
         List<Pedido> todos = pedidos.listar();
         for (int i = 0; i < todos.size(); i++) {
@@ -46,38 +53,5 @@ public class ReporteService {
             total = total + ventas.get(i).getTotal();
         }
         return total;
-    }
-
-    public void exportarStockBajo(String ruta) {
-        List<String[]> filas = new ArrayList<String[]>();
-        List<Producto> lista = stockBajo();
-        for (int i = 0; i < lista.size(); i++) {
-            Producto producto = lista.get(i);
-            filas.add(new String[]{
-                    producto.getCodigo(),
-                    producto.getNombre(),
-                    String.valueOf(producto.getStock()),
-                    String.valueOf(producto.getStockMinimo()),
-                    producto.getCategoria().getNombre()
-            });
-        }
-        CsvUtil.escribir(ruta, "codigo;nombre;stock;stockMinimo;categoria", filas);
-    }
-
-    public void exportarVentas(String ruta, LocalDate desde, LocalDate hasta) {
-        List<String[]> filas = new ArrayList<String[]>();
-        List<Pedido> lista = ventasPorFecha(desde, hasta);
-        for (int i = 0; i < lista.size(); i++) {
-            Pedido pedido = lista.get(i);
-            filas.add(new String[]{
-                    String.valueOf(pedido.getId()),
-                    pedido.getFecha().toString(),
-                    pedido.getCliente().getNombre(),
-                    pedido.getCliente().getDni(),
-                    pedido.getVendedor().getUsername(),
-                    String.format("%.2f", pedido.getTotal())
-            });
-        }
-        CsvUtil.escribir(ruta, "id;fecha;cliente;dni;vendedor;total", filas);
     }
 }

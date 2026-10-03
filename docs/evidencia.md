@@ -2,15 +2,16 @@
 
 ## 1. Prueba automatizada (21 verificaciones)
 
-Comando:
+Comando (requiere `db.properties` configurado y `sql/sgpi.sql` ejecutado):
 
 ```powershell
-java -cp target/classes com.elahorro.sgpi.pruebas.PruebasSistema
+java -cp "target/classes;$env:USERPROFILE\.m2\repository\com\mysql\mysql-connector-j\8.4.0\mysql-connector-j-8.4.0.jar" com.elahorro.sgpi.pruebas.PruebasSistema
 ```
 
-Salida:
+Salida esperada:
 
 ```text
+Conectado a: u000000000_sgpi
 [OK]    RF-01 - Login correcto
 [OK]    RF-01 - Login incorrecto rechazado
 [OK]    RF-02 - Solo admin elimina usuarios
@@ -31,16 +32,17 @@ Salida:
 [OK]    RF-16 - Cancelacion de pedido repone stock
 [OK]    RF-18 - Reporte de stock bajo
 [OK]    RF-19 - Reporte de ventas por fecha
-[OK]    RF-20 - Exportacion a CSV
+[OK]    RF-20 - Persistencia (recarga desde MySQL)
 
 ========================================
 RESULTADO: 21 correctas, 0 fallidas.
 ========================================
 ```
 
-## 2. Pruebas unitarias JUnit (opcional)
+> **Advertencia:** el runner limpia (TRUNCATE) las tablas de negocio. Use una
+> base de datos de practica, no produccion.
 
-Si dispone de Maven:
+## 2. Pruebas unitarias JUnit
 
 ```powershell
 mvn test
@@ -48,47 +50,34 @@ mvn test
 
 Archivo: `src/test/java/com/elahorro/sgpi/ModeloTest.java`.
 
-## 3. Evidencia de persistencia en CSV (carpeta `datos/`)
+## 3. Evidencia de persistencia en MySQL
 
-`productos.csv`
+Ejemplo de consultas y su resultado tras ejecutar las pruebas:
 
-```text
-id;codigo;nombre;precio;stock;stockMinimo;categoriaId
-1;T001;Samsung Galaxy A54;1299.90;8;3;1
-2;T002;Laptop HP 15;2499.00;1;5;1
-3;T003;Audifonos JBL;199.90;5;2;1
+```sql
+SELECT codigo, nombre, stock, stock_minimo FROM productos ORDER BY codigo;
+-- T001 | Samsung Galaxy A54 | 8 | 3
+-- T002 | Laptop HP 15      | 1 | 5
+-- T003 | Audifonos JBL     | 5 | 2
+
+SELECT id, fecha, estado, total, cliente_id, vendedor_id, pago_id FROM pedidos;
+-- 1 | 2026-09-23 | PAGADO    | 5098.80 | 1 | 2 | 1
+-- 2 | 2026-09-23 | CANCELADO |  599.70 | 1 | 2 | NULL
+
+SELECT id, nombre, username, password_hash, rol FROM usuarios;
+-- 1 | Administrador | admin     | 240be5...720a9 | ADMINISTRADOR
+-- 2 | Vendedor Uno  | vendedor1 | 7e6e1f...41ab9 | VENDEDOR
 ```
 
-`pedidos.csv`
-
-```text
-id;fecha;estado;descuento;total;clienteDni;vendedorUsername;pagoId
-1;2026-09-23;PAGADO;0.00;5098.80;12345678;vendedor1;1
-2;2026-09-23;CANCELADO;0.00;599.70;12345678;vendedor1;
-```
-
-`detalles.csv`
-
-```text
-pedidoId;detalleId;productoId;cantidad;precioUnitario;subtotal
-1;1;1;2;1299.90;2599.80
-1;2;2;1;2499.00;2499.00
-2;1;3;3;199.90;599.70
-```
-
-`usuarios.csv` (la contrasena se almacena cifrada, nunca en texto plano)
-
-```text
-id;nombre;username;passwordHash;rol
-1;Administrador;admin;240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9;ADMINISTRADOR
-2;Vendedor Uno;vendedor1;7e6e1f7bd27296e97d8494fc51cb3d19355b26e062e7c09a163d954213f41ab9;VENDEDOR
-```
+La contrasena se almacena cifrada (SHA-256), nunca en texto plano.
 
 ## 4. Como ejecutar la aplicacion
 
 ```powershell
-javac -encoding UTF-8 -d target/classes (Get-ChildItem -Recurse -Filter *.java src/main/java).FullName
-java -cp target/classes com.elahorro.sgpi.Main
+$conn = "$env:USERPROFILE\.m2\repository\com\mysql\mysql-connector-j\8.4.0\mysql-connector-j-8.4.0.jar"
+javac -encoding UTF-8 -cp $conn -d target/classes (Get-ChildItem -Recurse -Filter *.java src/main/java).FullName
+Copy-Item src/main/resources/* target/classes/
+java -cp "target/classes;$conn" com.elahorro.sgpi.Main
 ```
 
 Credenciales por defecto: **admin / admin123**.
@@ -126,4 +115,3 @@ Opcion:
 Submenus disponibles: Productos, Categorias, Clientes, Pedidos, Reportes y
 Usuarios (solo administrador). Cada accion valida las reglas de negocio e
 informa el resultado en pantalla.
-

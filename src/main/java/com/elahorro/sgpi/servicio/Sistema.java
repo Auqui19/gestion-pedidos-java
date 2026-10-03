@@ -1,15 +1,15 @@
 package com.elahorro.sgpi.servicio;
 
-import com.elahorro.sgpi.repositorio.CategoriaRepositorio;
-import com.elahorro.sgpi.repositorio.ClienteRepositorio;
-import com.elahorro.sgpi.repositorio.PagoRepositorio;
-import com.elahorro.sgpi.repositorio.PedidoRepositorio;
-import com.elahorro.sgpi.repositorio.ProductoRepositorio;
-import com.elahorro.sgpi.repositorio.UsuarioRepositorio;
+import com.elahorro.sgpi.repositorio.CategoriaDAO;
+import com.elahorro.sgpi.repositorio.ClienteDAO;
+import com.elahorro.sgpi.repositorio.PagoDAO;
+import com.elahorro.sgpi.repositorio.PedidoDAO;
+import com.elahorro.sgpi.repositorio.ProductoDAO;
+import com.elahorro.sgpi.repositorio.UsuarioDAO;
 
 /**
- * Contexto de aplicacion: crea los repositorios y servicios, y los conecta.
- * Es el punto de acceso que usa la interfaz grafica (vista).
+ * Contexto de aplicacion: crea los DAO (persistencia MySQL) y los servicios,
+ * y los conecta. Es el punto de acceso que usa la interfaz de consola (vista).
  */
 public class Sistema {
 
@@ -21,18 +21,18 @@ public class Sistema {
     public final ReporteService reportes;
 
     public Sistema() {
-        CategoriaRepositorio categoriaRepositorio = new CategoriaRepositorio();
-        ProductoRepositorio productoRepositorio = new ProductoRepositorio(categoriaRepositorio);
-        ClienteRepositorio clienteRepositorio = new ClienteRepositorio();
-        UsuarioRepositorio usuarioRepositorio = new UsuarioRepositorio();
-        PagoRepositorio pagoRepositorio = new PagoRepositorio();
-        PedidoRepositorio pedidoRepositorio = new PedidoRepositorio();
+        CategoriaDAO categoriaDAO = new CategoriaDAO();
+        ProductoDAO productoDAO = new ProductoDAO();
+        ClienteDAO clienteDAO = new ClienteDAO();
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+        PagoDAO pagoDAO = new PagoDAO();
+        PedidoDAO pedidoDAO = new PedidoDAO(clienteDAO, usuarioDAO, productoDAO, pagoDAO);
 
-        categorias = new CategoriaService(categoriaRepositorio);
-        productos = new ProductoService(productoRepositorio);
-        clientes = new ClienteService(clienteRepositorio);
-        usuarios = new UsuarioService(usuarioRepositorio);
-        pedidos = new PedidoService(pedidoRepositorio, productos, pagoRepositorio, clientes, usuarios);
+        categorias = new CategoriaService(categoriaDAO);
+        productos = new ProductoService(productoDAO);
+        clientes = new ClienteService(clienteDAO);
+        usuarios = new UsuarioService(usuarioDAO);
+        pedidos = new PedidoService(pedidoDAO, productos, productoDAO, pagoDAO);
         reportes = new ReporteService(pedidos, productos);
 
         sembrarDatosIniciales();

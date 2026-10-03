@@ -150,5 +150,8 @@ classDiagram
   elimina, sus detalles tambien.
 - **Inmutabilidad (RN-05):** `DetallePedido.precioUnitario` y `Pago.monto` son
   `final`, por lo que el precio de venta no cambia despues de registrado.
-- **Arquitectura:** separacion en capas `modelo`, `repositorio`, `servicio`,
-  `vista`, `util` (estilo MVC/DAO).
+- **Arquitectura:** separacion en capas `config`, `modelo`, `repositorio`,
+  `servicio`, `vista`, `util` (estilo MVC/DAO).
+- **Persistencia:** los `*DAO` del paquete `repositorio` implementan la interfaz
+  `Repositorio<T>` y acceden a MySQL con `PreparedStatement`; `Conexion`
+  (Singleton) administra las conexiones JDBC.

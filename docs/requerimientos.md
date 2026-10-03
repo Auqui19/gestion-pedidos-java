@@ -45,31 +45,38 @@ Su salida se conserva en `docs/evidencia.md`.
 | RN-05 | Inmutabilidad del precio de venta | `DetallePedido.precioUnitario` final |
 | RN-06 | Descuento maximo 20% sin autorizacion | `Pedido.setDescuento()` |
 | RN-07 | Solo el Administrador elimina productos/usuarios | `ProductoService.eliminar()` / `UsuarioService.eliminar()` |
+| RN-08 | Integridad referencial | `*DAO.tienePedidos/tieneDetalles/tieneProductos()` bloquean borrados |
 
 ## Estructura de paquetes
 
 ```
 com.elahorro.sgpi
 ├── Main.java              -> lanzador de la interfaz de consola
+├── config/                -> Conexion (Singleton JDBC a MySQL)
 ├── modelo/                -> clases del dominio + enums
-├── repositorio/           -> persistencia en archivos CSV
+├── repositorio/           -> DAO JDBC (Repositorio, *DAO)
 ├── servicio/              -> logica de negocio (Sistema, *Service)
 ├── vista/                 -> interfaz por consola
-├── util/                  -> Validador, Cifrador, CsvUtil
+├── util/                  -> Validador, Cifrador
 └── pruebas/               -> PruebasSistema (evidencia)
 ```
 
-## Persistencia (archivos CSV en `datos/`)
+## Persistencia (base de datos MySQL)
 
-| Archivo | Contenido |
-|---------|-----------|
-| `categorias.csv` | id; nombre |
-| `productos.csv` | id; codigo; nombre; precio; stock; stockMinimo; categoriaId |
-| `clientes.csv` | id; nombre; dni; telefono; direccion |
-| `usuarios.csv` | id; nombre; username; passwordHash; rol |
-| `pedidos.csv` | id; fecha; estado; descuento; total; clienteDni; vendedorUsername; pagoId |
-| `detalles.csv` | pedidoId; detalleId; productoId; cantidad; precioUnitario; subtotal |
-| `pagos.csv` | id; fecha; monto; metodo |
+Esquema definido en `sql/sgpi.sql`. Cada tabla tiene su DAO JDBC en el paquete
+`repositorio`.
+
+| Tabla | Contenido |
+|-------|-----------|
+| `categorias` | id, nombre |
+| `productos` | id, codigo, nombre, precio, stock, stock_minimo, categoria_id |
+| `clientes` | id, nombre, dni, telefono, direccion |
+| `usuarios` | id, nombre, username, password_hash, rol |
+| `pedidos` | id, fecha, estado, descuento, total, cliente_id, vendedor_id, pago_id |
+| `detalles` | id, pedido_id, numero, producto_id, cantidad, precio_unitario, subtotal |
+| `pagos` | id, fecha, monto, metodo |
+
+Configuracion en `src/main/resources/db.properties` (Hostinger + Remote MySQL).
 
 ## Credenciales por defecto
 

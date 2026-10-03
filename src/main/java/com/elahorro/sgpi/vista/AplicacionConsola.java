@@ -615,16 +615,12 @@ public class AplicacionConsola {
             consola.titulo("REPORTES");
             System.out.println("1. Reporte de stock bajo");
             System.out.println("2. Reporte de ventas por fecha");
-            System.out.println("3. Exportar stock bajo a CSV");
-            System.out.println("4. Exportar ventas a CSV");
             System.out.println("0. Volver");
             int opcion = consola.leerEntero("Opcion: ");
             try {
                 switch (opcion) {
                     case 1 -> reporteStockBajo();
                     case 2 -> reporteVentas();
-                    case 3 -> exportarStockBajo();
-                    case 4 -> exportarVentas();
                     case 0 -> volver = true;
                     default -> System.out.println("Opcion no valida.");
                 }
@@ -672,18 +668,6 @@ public class AplicacionConsola {
         consola.separador();
         System.out.printf("TOTAL VENDIDO (%s a %s): S/ %.2f%n",
                 desde, hasta, sistema.reportes.totalVentas(desde, hasta));
-    }
-
-    private void exportarStockBajo() {
-        sistema.reportes.exportarStockBajo("datos/reporte_stock_bajo.csv");
-        System.out.println("Reporte exportado a datos/reporte_stock_bajo.csv");
-    }
-
-    private void exportarVentas() {
-        LocalDate desde = leerFecha("Desde (AAAA-MM-DD): ");
-        LocalDate hasta = leerFecha("Hasta (AAAA-MM-DD): ");
-        sistema.reportes.exportarVentas("datos/reporte_ventas.csv", desde, hasta);
-        System.out.println("Reporte exportado a datos/reporte_ventas.csv");
     }
 
     // ------------------------------------------------------------------

@@ -1,5 +1,6 @@
 package com.elahorro.sgpi.pruebas;
 
+import com.elahorro.sgpi.config.Conexion;
 import com.elahorro.sgpi.modelo.Cliente;
 import com.elahorro.sgpi.modelo.Pago;
 import com.elahorro.sgpi.modelo.Pedido;
@@ -9,16 +10,18 @@ import com.elahorro.sgpi.modelo.enums.MetodoPago;
 import com.elahorro.sgpi.modelo.enums.Rol;
 import com.elahorro.sgpi.servicio.Sistema;
 
-import java.io.File;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 
 /**
  * Runner de evidencia: demuestra el funcionamiento de los 20 requerimientos
- * prioritarios del SGPI sin necesidad de JUnit. Ejecutar con:
+ * prioritarios del SGPI contra la base de datos MySQL. Ejecutar con:
  *   java -cp target/classes com.elahorro.sgpi.pruebas.PruebasSistema
  *
- * ADVERTENCIA: reinicia la carpeta "datos" para que las pruebas sean
- * repetibles.
+ * ADVERTENCIA: limpia las tablas de negocio para que las pruebas sean
+ * repetibles. Use una base de datos de practica, no produccion.
  */
 public class PruebasSistema {
 
@@ -26,7 +29,17 @@ public class PruebasSistema {
     private static int fallos = 0;
 
     public static void main(String[] args) {
-        reiniciarDatos();
+        try (Connection cn = Conexion.getConnection()) {
+            System.out.println("Conectado a: " + Conexion.getInstancia().getNombreBaseDatos());
+            reiniciarTablas(cn);
+        } catch (SQLException e) {
+            System.err.println("No se pudo conectar a la base de datos: " + e.getMessage());
+            System.err.println("Revise src/main/resources/db.properties y la whitelist de "
+                    + "Remote MySQL en Hostinger.");
+            System.exit(2);
+            return;
+        }
+
         Sistema s = new Sistema();
 
         Usuario admin = s.usuarios.login("admin", "admin123");
@@ -121,12 +134,12 @@ public class PruebasSistema {
         prueba("RF-19", "Reporte de ventas por fecha", () ->
                 espera(!s.reportes.ventasPorFecha(LocalDate.now(), LocalDate.now()).isEmpty(),
                         "Debe incluir el pedido pagado de hoy"));
-        prueba("RF-20", "Exportacion a CSV", () -> {
-            s.reportes.exportarStockBajo("datos/prueba_stock_bajo.csv");
-            s.reportes.exportarVentas("datos/prueba_ventas.csv",
-                    LocalDate.now(), LocalDate.now());
-            espera(new File("datos/prueba_stock_bajo.csv").exists(),
-                    "Debe generarse el archivo CSV");
+        prueba("RF-20", "Persistencia (recarga desde MySQL)", () -> {
+            Sistema recargado = new Sistema();
+            espera(recargado.productos.buscarPorCodigo("T001") != null,
+                    "El producto debe persistir en la base de datos");
+            espera(recargado.pedidos.buscarPorId(pedido.getId()) != null,
+                    "El pedido debe persistir en la base de datos");
         });
 
         System.out.println("\n========================================");
@@ -164,23 +177,17 @@ public class PruebasSistema {
         throw new AssertionError(mensaje);
     }
 
-    private static void reiniciarDatos() {
-        File datos = new File("datos");
-        borrarRecursivo(datos);
-    }
-
-    private static void borrarRecursivo(File archivo) {
-        if (archivo == null || !archivo.exists()) {
-            return;
+    private static void reiniciarTablas(Connection cn) throws SQLException {
+        try (Statement st = cn.createStatement()) {
+            st.executeUpdate("SET FOREIGN_KEY_CHECKS = 0");
+            st.executeUpdate("TRUNCATE TABLE detalles");
+            st.executeUpdate("TRUNCATE TABLE pedidos");
+            st.executeUpdate("TRUNCATE TABLE pagos");
+            st.executeUpdate("TRUNCATE TABLE productos");
+            st.executeUpdate("TRUNCATE TABLE clientes");
+            st.executeUpdate("TRUNCATE TABLE usuarios");
+            st.executeUpdate("TRUNCATE TABLE categorias");
+            st.executeUpdate("SET FOREIGN_KEY_CHECKS = 1");
         }
-        if (archivo.isDirectory()) {
-            File[] hijos = archivo.listFiles();
-            if (hijos != null) {
-                for (int i = 0; i < hijos.length; i++) {
-                    borrarRecursivo(hijos[i]);
-                }
-            }
-        }
-        archivo.delete();
     }
 }
